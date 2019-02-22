@@ -13,7 +13,7 @@ vue2, vuetify, socket.io, flask
 
 ## Screenshot
 
-![Screenshot](screenshot.png)
+![Screenshot](screen.png)
 
 ## Frontend
 
