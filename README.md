@@ -68,3 +68,9 @@ FLASK_DEBUG=0 python main.py
 ## Configuration
 
 Create `students.txt` with names of students (one per line), update `VUE_APP_BACKEND_ADDRESS` in .env.development if required.
+
+## Alternative production mode
+```
+docker build . --tag pyclass-console
+docker run -d -p 0.0.0.0:5000:5000 pyclass-console
+```
