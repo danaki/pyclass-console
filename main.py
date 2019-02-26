@@ -111,4 +111,4 @@ def catch_all(path):
         return send_from_directory('dist', 'index.html')
 
 if __name__ == '__main__':
-    socketio.run(app, debug=app.debug)
+    socketio.run(app, host="0.0.0.0", debug=app.debug)
