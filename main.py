@@ -67,6 +67,11 @@ def reset_statuses(status):
 
     socketio.emit('student_list', get_student_list(), broadcast=True)
 
+@socketio.on('reset_chat')
+def reset_chat():
+    del chat[:]
+    socketio.emit('chat_history', chat, broadcast=True)
+
 @socketio.on('connect')
 def connect():
     socketio.emit('task_triggered', dict(

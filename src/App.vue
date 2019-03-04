@@ -14,6 +14,9 @@
       <v-btn icon @click="triggerTask(false)" :disabled="!timers.timer.isRunning">
         <v-icon>stop</v-icon>
       </v-btn>
+      <v-btn icon @click="clearChat()">
+        <v-icon>clear_all</v-icon>
+      </v-btn>
     </v-toolbar>
 
     <v-content>
@@ -33,35 +36,37 @@
                 ></v-select>
               </v-card-title>
               <v-card-actions>
-                <v-spacer></v-spacer>
 
-                <v-btn
-                  :flat="status != 'thinking'"
-                  @click="status = 'thinking'"
-                  value="thinking"
-                  color="info"
-                  :disabled="!name"
-                >Thinking...
-                  <v-icon>query_builder</v-icon>
-                </v-btn>
-                <v-btn
-                  :flat="status != 'done'"
-                  @click="status = 'done'"
-                  color="success"
-                  :disabled="!name"
-                >Done
-                  <v-icon>done</v-icon>
-                </v-btn>
-                <v-btn
-                  :flat="status != 'stuck'"
-                  @click="status = 'stuck'"
-                  color="warning"
-                  :disabled="!name"
-                >Stuck
-                  <v-icon>power_off</v-icon>
-                </v-btn>
+                  <v-spacer></v-spacer>
+                <div class="text-xs-center">
+                  <v-btn
+                    :flat="status != 'thinking'"
+                    @click="status = 'thinking'"
+                    value="thinking"
+                    color="info"
+                    :disabled="!name"
+                  >Thinking...
+                    <v-icon>query_builder</v-icon>
+                  </v-btn>
+                  <v-btn
+                    :flat="status != 'done'"
+                    @click="status = 'done'"
+                    color="success"
+                    :disabled="!name"
+                  >Done
+                    <v-icon>done</v-icon>
+                  </v-btn>
+                  <v-btn
+                    :flat="status != 'stuck'"
+                    @click="status = 'stuck'"
+                    color="warning"
+                    :disabled="!name"
+                  >Stuck
+                    <v-icon>power_off</v-icon>
+                  </v-btn>
+                </div>
+                  <v-spacer></v-spacer>
 
-                <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -128,11 +133,12 @@
             </v-toolbar>
 
             <v-list>
-              <template v-for="message in chat">
-                <v-list-tile :key="message">
+              <template v-for="(message, index) in chat">
+                <v-list-tile :key="index">
                   <v-list-tile-content>
                     <v-list-tile-sub-title>
-                      <span class='text--primary'>{{ message.name }}</span> &mdash; {{ message.text }}
+                      <span class="text--primary">{{ message.name }}</span>
+                      &mdash; {{ message.text }}
                     </v-list-tile-sub-title>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -155,8 +161,10 @@ export default {
       status: null,
       runningTime: 0,
       students: [],
-      socket: io(process.env.VUE_APP_BACKEND_ADDRESS
-        || window.location.hostname + ':' + window.location.port),
+      socket: io(
+        process.env.VUE_APP_BACKEND_ADDRESS ||
+          window.location.hostname + ":" + window.location.port
+      ),
       chat: []
     };
   },
@@ -175,15 +183,18 @@ export default {
     triggerTask(started) {
       this.socket.emit("trigger_task", started);
     },
+    clearChat() {
+      this.socket.emit("reset_chat");
+    },
     onConnect() {
       this.socket.emit("student_list_request");
       this.socket.emit("login", this.name);
     },
     onChatMessage(data) {
-      this.chat = [ data, ...this.chat ];
+      this.chat = [data, ...this.chat];
     },
     onChatHistory(data) {
-      this.chat = data
+      this.chat = data.reverse();
     },
     onStudentList(data) {
       this.students = data;
